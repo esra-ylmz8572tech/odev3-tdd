@@ -58,3 +58,22 @@ class StudentSearchFunctionalTests(unittest.TestCase):
 
         result_cards = self.browser.find_elements(By.ID, "student-result")
         self.assertEqual(len(result_cards), 0)
+
+    def test_s2_search_ada_deniz_flow(self):
+        self.browser.get(f"{self.base_url}/")
+
+        student_input = self.browser.find_element(By.ID, "student-no")
+        student_input.clear()
+        student_input.send_keys("20260001")
+        self.browser.find_element(By.ID, "search-button").click()
+
+        self.wait.until(lambda d: "student_no=20260001" in d.current_url)
+
+        message = self.browser.find_element(By.ID, "search-message")
+        self.assertEqual(message.text.strip(), "Öğrenci bulundu.")
+
+        self.browser.find_element(By.ID, "student-result")
+        result_no = self.browser.find_element(By.ID, "result-student-no")
+        result_name = self.browser.find_element(By.ID, "result-full-name")
+        self.assertEqual(result_no.text.strip(), "20260001")
+        self.assertEqual(result_name.text.strip(), "Ada Deniz")
