@@ -11,8 +11,12 @@ def find_student(students, student_no):
     eşleşmeyen numara için None döndürülür. Kısmi eşleşme yapılmaz.
     Öğrenci numaralarının başındaki sıfırlar korunur.
     Kaynak liste, kayıtlar ve kayıt sırası değiştirilmez.
-
-    Bu taslakta uygulama kodu bilinçli olarak tamamlanmamıştır.
-    Önce beklenen davranışı tanımlayan bir test yazınız.
     """
-    raise NotImplementedError("Arama işlevini TDD adımlarıyla tamamlayınız.")
+    if not student_no:
+        return None
+
+    for student in students:
+        if student["student_no"] == student_no:
+            return dict(student)
+
+    return None

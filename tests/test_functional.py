@@ -10,6 +10,7 @@ import unittest
 import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
 
@@ -39,5 +40,40 @@ class StudentSearchFunctionalTests(unittest.TestCase):
         if hasattr(self, "browser"):
             self.browser.quit()
 
-    # TODO: S1 için ilk test metodunuzu ekleyiniz; sonra akışları genişletiniz.
-    # self.browser, self.wait ve self.base_url hazırlıkta tanımlanır.
+    def test_s1_initial_page(self):
+        self.browser.get(f"{self.base_url}/")
+
+        heading = self.browser.find_element(By.TAG_NAME, "h1")
+        self.assertIn("Öğrenci Sorgulama", heading.text)
+
+        student_input = self.browser.find_element(By.ID, "student-no")
+        self.assertEqual(student_input.get_attribute("name"), "student_no")
+        self.assertEqual(student_input.get_attribute("type"), "text")
+        self.assertIsNone(student_input.get_attribute("required"))
+
+        self.browser.find_element(By.ID, "search-button")
+
+        message = self.browser.find_element(By.ID, "search-message")
+        self.assertEqual(message.text.strip(), "Öğrenci numarası giriniz.")
+
+        result_cards = self.browser.find_elements(By.ID, "student-result")
+        self.assertEqual(len(result_cards), 0)
+
+    def test_s2_search_ada_deniz_flow(self):
+        self.browser.get(f"{self.base_url}/")
+
+        student_input = self.browser.find_element(By.ID, "student-no")
+        student_input.clear()
+        student_input.send_keys("20260001")
+        self.browser.find_element(By.ID, "search-button").click()
+
+        self.wait.until(lambda d: "student_no=20260001" in d.current_url)
+
+        message = self.browser.find_element(By.ID, "search-message")
+        self.assertEqual(message.text.strip(), "Öğrenci bulundu.")
+
+        self.browser.find_element(By.ID, "student-result")
+        result_no = self.browser.find_element(By.ID, "result-student-no")
+        result_name = self.browser.find_element(By.ID, "result-full-name")
+        self.assertEqual(result_no.text.strip(), "20260001")
+        self.assertEqual(result_name.text.strip(), "Ada Deniz")

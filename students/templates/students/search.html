@@ -2,9 +2,494 @@
 <html lang="tr">
 <head>
     <meta charset="utf-8">
-    <title>Ödev 3</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Öğrenci Sorgulama | OBS</title>
+    <style>
+        :root {
+            --bg: #f4f6fa;
+            --surface: #ffffff;
+            --surface-muted: #f8fafc;
+            --border: #e2e8f0;
+            --border-strong: #cbd5e1;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --accent: #1d4ed8;
+            --accent-hover: #1e40af;
+            --accent-soft: #eff6ff;
+            --success: #047857;
+            --success-bg: #ecfdf5;
+            --success-border: #a7f3d0;
+            --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+            --shadow-lg: 0 20px 40px -12px rgba(15, 23, 42, 0.08), 0 4px 12px -4px rgba(15, 23, 42, 0.04);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg);
+            background-image: radial-gradient(at 15% 10%, rgba(29, 78, 216, 0.06) 0px, transparent 50%),
+                              radial-gradient(at 85% 90%, rgba(15, 23, 42, 0.05) 0px, transparent 50%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Top Navigation Bar */
+        .topbar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-title {
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+        }
+
+        .brand-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .env-badge {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent);
+            background: var(--accent-soft);
+            border: 1px solid #dbeafe;
+            padding: 5px 12px;
+            border-radius: 999px;
+        }
+
+        /* Main Area */
+        .main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .panel {
+            width: 100%;
+            max-width: 560px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        .panel-head {
+            padding: 28px 32px 22px;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(180deg, #ffffff 0%, #fafcff 100%);
+        }
+
+        .panel-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .panel-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .panel-body {
+            padding: 28px 32px 32px;
+        }
+
+        /* Search Form */
+        .field-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .search-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            flex: 1;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+        }
+
+        #student-no {
+            width: 100%;
+            height: 46px;
+            padding: 0 14px 0 42px;
+            font-size: 15px;
+            color: var(--text-primary);
+            background: var(--surface);
+            border: 1.5px solid var(--border-strong);
+            border-radius: 10px;
+            outline: none;
+            transition: border-color 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        #student-no::placeholder {
+            color: #94a3b8;
+        }
+
+        #student-no:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.12);
+        }
+
+        #search-button {
+            height: 46px;
+            padding: 0 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+            background: var(--accent);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.18s ease, transform 0.12s ease, box-shadow 0.18s ease;
+            box-shadow: 0 2px 6px rgba(29, 78, 216, 0.25);
+            white-space: nowrap;
+        }
+
+        #search-button:hover {
+            background: var(--accent-hover);
+            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+        }
+
+        #search-button:active {
+            transform: translateY(1px);
+        }
+
+        .field-hint {
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Status Banner */
+        .status-banner {
+            margin-top: 22px;
+            padding: 13px 16px;
+            border-radius: 10px;
+            background: var(--surface-muted);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .status-banner.found {
+            background: var(--success-bg);
+            border-color: var(--success-border);
+            color: var(--success);
+        }
+
+        .status-icon {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        #search-message {
+            font-weight: 500;
+        }
+
+        /* Result ID Card */
+        #student-result {
+            margin-top: 20px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            overflow: hidden;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+        }
+
+        .card-header {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-identity {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.14);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .card-sub {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+
+        .verified-pill {
+            font-size: 11px;
+            font-weight: 600;
+            color: #6ee7b7;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(110, 231, 183, 0.3);
+            padding: 4px 10px;
+            border-radius: 999px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            padding: 20px;
+            background: #fafcff;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+        }
+
+        .info-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .mono {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            letter-spacing: 0.03em;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 18px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 520px) {
+            .topbar {
+                padding: 0 18px;
+            }
+            .panel-head,
+            .panel-body {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+            .search-group {
+                flex-direction: column;
+            }
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Başlangıç sayfası</h1>
+    <nav class="topbar">
+        <div class="brand">
+            <div class="brand-logo" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                    <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                </svg>
+            </div>
+            <div class="brand-text">
+                <span class="brand-title">Öğrenci Bilgi Sistemi</span>
+                <span class="brand-sub">Kayıt Doğrulama Portalı</span>
+            </div>
+        </div>
+        <span class="env-badge">OBS v1.0</span>
+    </nav>
+
+    <main class="main">
+        <div class="panel">
+            <header class="panel-head">
+                <div class="panel-eyebrow">Kayıt Sorgulama</div>
+                <h1>Öğrenci Sorgulama</h1>
+                <p class="panel-desc">Öğrenci numarasını girerek kayıtlı öğrenci bilgilerini hızlıca doğrulayabilirsiniz.</p>
+            </header>
+
+            <section class="panel-body">
+                <form method="get" action="/">
+                    <label class="field-label" for="student-no">Öğrenci Numarası</label>
+                    <div class="search-group">
+                        <div class="input-wrapper">
+                            <span class="input-icon" aria-hidden="true">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="11" cy="11" r="8"/>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                                </svg>
+                            </span>
+                            <input
+                                id="student-no"
+                                name="student_no"
+                                type="text"
+                                placeholder="Öğrenci numarasını giriniz..."
+                                autocomplete="off"
+                                value="{{ student_no|default:'' }}"
+                            >
+                        </div>
+                        <button id="search-button" type="submit">Sorgula</button>
+                    </div>
+                    <p class="field-hint">Numaranın tamamını eksiksiz olarak giriniz.</p>
+                </form>
+
+                <div class="status-banner{% if student %} found{% endif %}">
+                    <span class="status-icon" aria-hidden="true">
+                        {% if student %}
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                        {% else %}
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="16" x2="12" y2="12"/>
+                            <line x1="12" y1="8" x2="12.01" y2="8"/>
+                        </svg>
+                        {% endif %}
+                    </span>
+                    <span id="search-message">{{ message|default:"Öğrenci numarası giriniz." }}</span>
+                </div>
+
+                {% if student %}
+                <div id="student-result">
+                    <div class="card-header">
+                        <div class="card-identity">
+                            <div class="avatar" aria-hidden="true">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="12" cy="7" r="4"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="card-title">Öğrenci Kimlik Kartı</div>
+                                <div class="card-sub">Sistem Kaydı Eşleşti</div>
+                            </div>
+                        </div>
+                        <span class="verified-pill">Kayıtlı</span>
+                    </div>
+                    <div class="card-grid">
+                        <div class="info-item">
+                            <span class="info-label">Öğrenci Numarası</span>
+                            <span class="info-value mono" id="result-student-no">{{ student.student_no }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Ad Soyad</span>
+                            <span class="info-value" id="result-full-name">{{ student.full_name }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        Öğrenci Bilgi Sistemi Prototipi · Test Sürüşlü Geliştirme
+    </footer>
 </body>
 </html>
