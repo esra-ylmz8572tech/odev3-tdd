@@ -12,6 +12,11 @@ def find_student(students, student_no):
     Öğrenci numaralarının başındaki sıfırlar korunur.
     Kaynak liste, kayıtlar ve kayıt sırası değiştirilmez.
     """
-    if student_no == "20260001" and students:
-        return dict(students[0])
+    if not student_no:
+        return None
+
+    for student in students:
+        if student["student_no"] == student_no:
+            return dict(student)
+
     return None
