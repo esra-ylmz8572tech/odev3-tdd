@@ -2,9 +2,17 @@
 <html lang="tr">
 <head>
     <meta charset="utf-8">
-    <title>Ödev 3</title>
+    <title>Öğrenci Sorgulama</title>
 </head>
 <body>
-    <h1>Başlangıç sayfası</h1>
+    <h1>Öğrenci Sorgulama</h1>
+
+    <form method="get" action="/">
+        <label for="student-no">Öğrenci Numarası:</label>
+        <input id="student-no" name="student_no" type="text" value="{{ student_no|default:'' }}">
+        <button id="search-button" type="submit">Ara</button>
+    </form>
+
+    <p id="search-message">{{ message|default:"Öğrenci numarası giriniz." }}</p>
 </body>
 </html>
