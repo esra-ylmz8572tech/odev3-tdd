@@ -14,5 +14,12 @@
     </form>
 
     <p id="search-message">{{ message|default:"Öğrenci numarası giriniz." }}</p>
+
+    {% if student %}
+    <div id="student-result">
+        <p><strong>Numara:</strong> <span id="result-student-no">{{ student.student_no }}</span></p>
+        <p><strong>Ad Soyad:</strong> <span id="result-full-name">{{ student.full_name }}</span></p>
+    </div>
+    {% endif %}
 </body>
 </html>
